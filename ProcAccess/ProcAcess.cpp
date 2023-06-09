@@ -58,6 +58,10 @@ NTSTATUS OnDeviceControl(PDEVICE_OBJECT, PIRP Irp) {
 	ULONG len = 0;
 	switch (dic.IoControlCode) {
 		case IOCTL_OPEN_PROCESS:
+			if (dic.InputBufferLength < sizeof(ULONG) || dic.OutputBufferLength < sizeof(HANDLE)) {
+				status = STATUS_BUFFER_TOO_SMALL;
+				break;
+			}
 			auto pid = *(ULONG*)Irp->AssociatedIrp.SystemBuffer;
 			HANDLE hProcess;
 			CLIENT_ID cid{};
